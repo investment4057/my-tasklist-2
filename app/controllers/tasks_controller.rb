@@ -2,7 +2,10 @@ class TasksController < ApplicationController
   before_action :set_task, only: [:show, :edit, :update, :destroy]
 
   def index
-    @tasks = Task.all
+    # @tasks = Task.all # ページネーションなし
+    @pagy, @tasks = pagy(Task.all)
+    # @pagy, @tasks = pagy(Task.all, items: 3) # 件数絞り
+    # @pagy, @tasks = pagy(Task.order(id: :desc), items:3) # 順番変更と件数絞り
   end
 
   def show
