@@ -3,7 +3,8 @@ class TasksController < ApplicationController
 
   def index
     # @tasks = Task.all # ページネーションなし
-    @pagy, @tasks = pagy(Task.all)
+    # @pagy, @tasks = pagy(Task.all)
+    @pagy, @tasks = pagy(Task.order(id: :desc))
     # @pagy, @tasks = pagy(Task.all, items: 3) # 件数絞り
     # @pagy, @tasks = pagy(Task.order(id: :desc), items:3) # 順番変更と件数絞り
   end
