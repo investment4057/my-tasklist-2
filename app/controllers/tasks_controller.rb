@@ -1,13 +1,15 @@
 class TasksController < ApplicationController
   before_action :require_user_logged_in
+  before_action :correct_user, only: [:show, :edit, :update, :destroy]
   before_action :set_task, only: [:show, :edit, :update, :destroy]
 
   def index
     # @tasks = Task.all # ページネーションなし
     # @pagy, @tasks = pagy(Task.all)
-    @pagy, @tasks = pagy(Task.order(id: :desc))
+    # @pagy, @tasks = pagy(Task.order(id: :desc))
     # @pagy, @tasks = pagy(Task.all, items: 3) # 件数絞り
     # @pagy, @tasks = pagy(Task.order(id: :desc), items:3) # 順番変更と件数絞り
+    @pagy, @tasks = pagy(current_user.tasks.order(id: :desc)) # ログインしたユーザーのみの投稿一覧
   end
 
   def show
@@ -18,7 +20,7 @@ class TasksController < ApplicationController
   end
 
   def create
-    @task = Task.new(task_params)
+    @task = current_user.tasks.build(task_params)
 
     if @task.save
       flash[:success] = 'Task が正常に投稿されました'
@@ -59,5 +61,12 @@ class TasksController < ApplicationController
   # Strong Parameter
   def task_params
     params.require(:task).permit(:content, :status)
+  end
+
+  def correct_user
+    @task = current_user.tasks.find_by(id: params[:id])
+    unless @task
+      redirect_to root_url
+    end
   end
 end
